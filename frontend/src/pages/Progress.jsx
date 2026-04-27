@@ -51,15 +51,13 @@ function Progress() {
           {progressList.map((p) => (
             <li key={p.id}>
               <strong>{p.subject}</strong>: {p.percent}%
-              <div style={{ background: '#eee', borderRadius: '4px', width: '200px', marginTop: '4px' }}>
+              <div className="progress-bar-bg" style={{ maxWidth: '300px', marginTop: '0.5rem', height: '18px' }}>
                 <div
-                  style={{
-                    width: `${p.percent}%`,
-                    background: '#646cff',
-                    height: '10px',
-                    borderRadius: '4px',
-                  }}
-                />
+                  className="progress-bar-fill"
+                  style={{ width: `${p.percent}%` }}
+                >
+                  {p.percent > 15 && `${p.percent}%`}
+                </div>
               </div>
             </li>
           ))}

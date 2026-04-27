@@ -19,6 +19,31 @@ function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
+
+      <div className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-icon">🎓</div>
+          <div className="stat-info">
+            <h3>Total Events</h3>
+            <p>{events.length}</p>
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon">📝</div>
+          <div className="stat-info">
+            <h3>Notes Saved</h3>
+            <p>{notes.length}</p>
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon">📈</div>
+          <div className="stat-info">
+            <h3>Avg Progress</h3>
+            <p>{totalProgress}%</p>
+          </div>
+        </div>
+      </div>
+
       <section>
         <h2>Upcoming Events</h2>
         {events.length === 0 ? (
@@ -52,15 +77,13 @@ function Dashboard() {
       <section>
         <h2>Overall Study Progress</h2>
         <p>{totalProgress}% average completion</p>
-        <div style={{ background: '#eee', borderRadius: '4px', width: '100%', maxWidth: '400px' }}>
+        <div className="progress-bar-bg">
           <div
-            style={{
-              width: `${totalProgress}%`,
-              background: '#646cff',
-              height: '20px',
-              borderRadius: '4px',
-            }}
-          />
+            className="progress-bar-fill"
+            style={{ width: `${totalProgress}%` }}
+          >
+            {totalProgress > 10 && `${totalProgress}%`}
+          </div>
         </div>
       </section>
     </div>

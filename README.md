@@ -45,14 +45,32 @@ routine_planner/
 
 - [Node.js](https://nodejs.org/) installed on your machine.
 
-### 1. Install Backend Dependencies
+### Quick Start (Single Command)
+
+You can install all dependencies and run both servers using the root `package.json`:
+
+```bash
+# Install dependencies for root, frontend, and backend
+npm run install:all
+
+# Run both backend and frontend in development mode
+npm run dev
+```
+
+The backend will run on `http://localhost:3000` and the frontend on `http://localhost:5173`.
+
+### Manual Setup
+
+If you prefer to start them separately:
+
+#### 1. Install Backend Dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-### 2. Start the Backend Server
+#### 2. Start the Backend Server
 
 ```bash
 npm start
@@ -60,7 +78,7 @@ npm start
 
 The backend will run on `http://localhost:3000`.
 
-### 3. Install Frontend Dependencies
+#### 3. Install Frontend Dependencies
 
 Open a new terminal and run:
 
@@ -69,7 +87,7 @@ cd frontend
 npm install
 ```
 
-### 4. Start the Frontend Development Server
+#### 4. Start the Frontend Development Server
 
 ```bash
 npm run dev

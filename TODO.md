@@ -11,6 +11,7 @@
   - [x] package.json
   - [x] server.js
   - [x] Routes (routines, progress, events, notes)
-- [x] Create README.md with instructions
-- [x] Mark task as complete
+- [x] Add modern CSS design to Navbar and global styles
+- [x] Update Dashboard and Progress pages to use new design classes
+- [x] Add dark/light mode toggle with localStorage persistence
 
