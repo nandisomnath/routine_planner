@@ -16,7 +16,13 @@ app.get('/', (req, res) => {
   res.send('Routine Planner API is running.')
 })
 
-app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`)
-})
+// Start server only when running locally (not on Vercel)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server listening on http://localhost:${PORT}`)
+  })
+}
+
+// Export for Vercel serverless deployment
+module.exports = app
 
