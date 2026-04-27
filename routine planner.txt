@@ -1,0 +1,9 @@
+make a website to track completation of the syllabus
+
+1. it will make routine according to your schadule,
+best for you.
+
+2. it will keep track your study progress
+3. it will keep track of your academic events also.
+4. it will give option to add notes for a date
+5. it will show the events on dashboard
