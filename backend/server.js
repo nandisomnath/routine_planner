@@ -7,10 +7,10 @@ const PORT = 3000
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/routines', require('./routes/routines'))
-app.use('/api/progress', require('./routes/progress'))
-app.use('/api/events', require('./routes/events'))
-app.use('/api/notes', require('./routes/notes'))
+app.use('/routines', require('./routes/routines'))
+app.use('/progress', require('./routes/progress'))
+app.use('/events', require('./routes/events'))
+app.use('/notes', require('./routes/notes'))
 
 app.get('/', (req, res) => {
   res.send('Routine Planner API is running.')
