@@ -1,9 +1,15 @@
 import { motion } from 'framer-motion'
 import { Clock, BarChart3, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useProgress } from '../hooks/useProgress'
+import { roadmapData } from '../data/plansData'
 
 function PlanCard({ plan, index }) {
   const navigate = useNavigate()
+  const { getPlanProgress } = useProgress(plan.id)
+  const roadmap = roadmapData[plan.id] || []
+  const { completed, total } = getPlanProgress(roadmap)
+  const percent = total > 0 ? Math.round((completed / total) * 100) : 0
 
   return (
     <motion.div
@@ -37,6 +43,26 @@ function PlanCard({ plan, index }) {
             {plan.level}
           </span>
         </div>
+
+        {/* Plan-level progress bar */}
+        {total > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center justify-between text-xs mb-1.5">
+              <span className="text-[var(--text-muted)] font-medium">
+                {completed}/{total} completed
+              </span>
+              <span className="text-primary font-bold">{percent}%</span>
+            </div>
+            <div className="w-full h-2 rounded-full bg-[var(--progress-bg)] overflow-hidden">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
+                initial={{ width: 0 }}
+                animate={{ width: `${percent}%` }}
+                transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-[var(--border-color)]">
           <span className="text-xs text-[var(--text-muted)]">Click to view roadmap</span>

@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Map, BookOpen } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowLeft, Map, BookOpen, RotateCcw } from 'lucide-react'
 import RoadmapNode from '../components/RoadmapNode'
 import { plans, roadmapData } from '../data/plansData'
+import { useProgress } from '../hooks/useProgress'
 
 function PlanDetail() {
   const { id } = useParams()
@@ -11,6 +12,10 @@ function PlanDetail() {
 
   const plan = plans.find((p) => p.id === id)
   const roadmap = roadmapData[id] || []
+
+  const { getPlanProgress, resetPlan } = useProgress(id)
+  const { completed, total } = getPlanProgress(roadmap)
+  const percent = total > 0 ? Math.round((completed / total) * 100) : 0
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -55,9 +60,10 @@ function PlanDetail() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/plans')}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-muted)] hover:text-primary hover:border-primary/40 transition-colors duration-200"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-muted)] hover:text-primary hover:border-primary/40 transition-colors duration-200"
           >
             <ArrowLeft size={18} />
+            <span className="text-sm font-medium">Back</span>
           </motion.button>
 
           <div className="flex-grow min-w-0">
@@ -75,8 +81,64 @@ function PlanDetail() {
               </span>
             </div>
           </div>
+
+          {/* Overall plan progress in header */}
+          {total > 0 && (
+            <div className="hidden sm:flex items-center gap-3 flex-shrink-0">
+              <div className="text-right">
+                <div className="text-xs text-[var(--text-muted)]">
+                  {completed}/{total} done
+                </div>
+                <div className="text-sm font-bold text-primary">{percent}%</div>
+              </div>
+              <div className="w-24 h-2 rounded-full bg-[var(--progress-bg)] overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${percent}%` }}
+                  transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                />
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={resetPlan}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-colors text-xs font-medium"
+                title="Reset all progress"
+              >
+                <RotateCcw size={13} />
+                Reset
+              </motion.button>
+            </div>
+          )}
         </div>
       </motion.div>
+
+      {/* Mobile overall progress */}
+      {total > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.4 }}
+          className="sm:hidden mb-6"
+        >
+          <div className="flex items-center justify-between text-xs mb-1.5">
+            <span className="text-[var(--text-muted)] font-medium">Overall Progress</span>
+            <span className="text-primary font-bold">{percent}%</span>
+          </div>
+          <div className="w-full h-2 rounded-full bg-[var(--progress-bg)] overflow-hidden">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
+              initial={{ width: 0 }}
+              animate={{ width: `${percent}%` }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            />
+          </div>
+          <div className="text-xs text-[var(--text-muted)] mt-1">
+            {completed} of {total} subtopics completed
+          </div>
+        </motion.div>
+      )}
 
       {/* Description */}
       <motion.p
@@ -108,6 +170,7 @@ function PlanDetail() {
               node={node}
               index={index}
               total={roadmap.length}
+              planId={id}
             />
           ))}
         </div>

@@ -1,10 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, BookOpen, ChevronDown } from 'lucide-react'
+import { Clock, BookOpen, ChevronDown, RotateCcw, CheckCircle2 } from 'lucide-react'
+import { useProgress } from '../hooks/useProgress'
+import SubtopicItem from './SubtopicItem'
 
-function RoadmapNode({ node, index, total }) {
+function RoadmapNode({ node, index, total, planId }) {
   const ref = useRef(null)
   const [isFocused, setIsFocused] = useState(false)
+  const {
+    toggleSubtopic,
+    isCompleted,
+    getNodeProgress,
+    markAllNode,
+    resetNode,
+  } = useProgress(planId)
+
+  const subtopicIds = node.subtopics.map((s) => s.id)
+  const { completed, total: totalSubs } = getNodeProgress(node.id, subtopicIds)
+  const nodePercent = totalSubs > 0 ? Math.round((completed / totalSubs) * 100) : 0
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -120,6 +133,19 @@ function RoadmapNode({ node, index, total }) {
               <BookOpen size={13} />
               {node.lessons} lessons
             </span>
+            <span className="flex items-center gap-1 font-semibold text-primary-light">
+              {completed}/{totalSubs} done
+            </span>
+          </div>
+
+          {/* Node-level mini progress bar (always visible) */}
+          <div className="w-full h-1.5 rounded-full bg-[var(--progress-bg)] overflow-hidden mb-3">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
+              initial={{ width: 0 }}
+              animate={{ width: `${nodePercent}%` }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            />
           </div>
 
           {/* Expanded content */}
@@ -141,21 +167,52 @@ function RoadmapNode({ node, index, total }) {
                   {node.description}
                 </motion.p>
 
-                <div className="space-y-2">
-                  <span className="text-xs font-semibold text-[var(--text-heading)] uppercase tracking-wider">
-                    Subtopics
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {node.subtopics.map((sub, i) => (
-                      <motion.span
-                        key={sub}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.15 + i * 0.05, duration: 0.25 }}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-light border border-primary/20"
+                {/* Subtopic checkboxes */}
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-[var(--text-heading)] uppercase tracking-wider">
+                      Subtopics
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          markAllNode(node.id, subtopicIds)
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-primary/10 text-primary-light border border-primary/20 hover:bg-primary/20 transition-colors"
+                        title="Mark all complete"
                       >
-                        {sub}
-                      </motion.span>
+                        <CheckCircle2 size={12} />
+                        All
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          resetNode(node.id, subtopicIds)
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors"
+                        title="Reset progress"
+                      >
+                        <RotateCcw size={12} />
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {node.subtopics.map((sub, i) => (
+                      <motion.div
+                        key={sub.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.15 + i * 0.05, duration: 0.25 }}
+                      >
+                        <SubtopicItem
+                          subtopic={sub}
+                          nodeId={node.id}
+                          completed={isCompleted(node.id, sub.id)}
+                          onToggle={toggleSubtopic}
+                        />
+                      </motion.div>
                     ))}
                   </div>
                 </div>
