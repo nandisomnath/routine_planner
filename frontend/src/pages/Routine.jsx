@@ -51,6 +51,7 @@ function Routine() {
       <form onSubmit={handleSubmit} noValidate>
         <div>
           <input
+            name="title"
             placeholder="Task / Subject"
             value={title}
             onChange={(e) => { setTitle(e.target.value); setErrors((prev) => ({ ...prev, title: undefined })) }}
@@ -62,6 +63,7 @@ function Routine() {
         </div>
         <div>
           <input
+            name="time"
             placeholder="Time (e.g., 10:00 AM - 12:00 PM)"
             value={time}
             onChange={(e) => { setTime(e.target.value); setErrors((prev) => ({ ...prev, time: undefined })) }}

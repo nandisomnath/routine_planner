@@ -54,6 +54,7 @@ function Progress() {
       <form onSubmit={handleSubmit} noValidate>
         <div>
           <input
+            name="subject"
             placeholder="Subject / Topic"
             value={subject}
             onChange={(e) => { setSubject(e.target.value); setErrors((prev) => ({ ...prev, subject: undefined })) }}
@@ -65,6 +66,7 @@ function Progress() {
         </div>
         <div>
           <input
+            name="percent"
             type="number"
             min="0"
             max="100"

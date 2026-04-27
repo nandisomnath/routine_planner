@@ -59,6 +59,7 @@ function Notes() {
       <form onSubmit={handleSubmit} noValidate>
         <div>
           <input
+            name="date"
             type="date"
             value={date}
             onChange={(e) => { setDate(e.target.value); setErrors((prev) => ({ ...prev, date: undefined })) }}
@@ -69,6 +70,7 @@ function Notes() {
         </div>
         <div>
           <textarea
+            name="content"
             placeholder="Write your note here..."
             value={content}
             onChange={(e) => { setContent(e.target.value); setErrors((prev) => ({ ...prev, content: undefined })) }}

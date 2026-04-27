@@ -59,6 +59,7 @@ function Events() {
       <form onSubmit={handleSubmit} noValidate>
         <div>
           <input
+            name="title"
             placeholder="Event Title"
             value={title}
             onChange={(e) => { setTitle(e.target.value); setErrors((prev) => ({ ...prev, title: undefined })) }}
@@ -70,6 +71,7 @@ function Events() {
         </div>
         <div>
           <input
+            name="date"
             type="date"
             value={date}
             onChange={(e) => { setDate(e.target.value); setErrors((prev) => ({ ...prev, date: undefined })) }}
