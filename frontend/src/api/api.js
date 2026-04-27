@@ -26,9 +26,22 @@ function setItems(key, items) {
   localStorage.setItem(key, JSON.stringify(items))
 }
 
+function computeStatus(routine) {
+  if (routine.isFollowed) return 'completed'
+  const now = new Date()
+  const endDateTime = new Date(`${routine.date}T${routine.endTime}`)
+  if (now > endDateTime) return 'backlog'
+  return 'upcoming'
+}
+
+function enrichRoutine(routine) {
+  return { ...routine, status: computeStatus(routine) }
+}
+
 // Routines
 export function getRoutines() {
-  return getItems(STORAGE_KEYS.routines)
+  const routines = getItems(STORAGE_KEYS.routines)
+  return routines.map(enrichRoutine)
 }
 
 export function createRoutine(data) {
@@ -36,7 +49,22 @@ export function createRoutine(data) {
   const newRoutine = { id: getNextId(), ...data }
   routines.push(newRoutine)
   setItems(STORAGE_KEYS.routines, routines)
-  return newRoutine
+  return enrichRoutine(newRoutine)
+}
+
+export function updateRoutine(id, updates) {
+  const routines = getItems(STORAGE_KEYS.routines)
+  const index = routines.findIndex((r) => r.id === id)
+  if (index === -1) return null
+  routines[index] = { ...routines[index], ...updates }
+  setItems(STORAGE_KEYS.routines, routines)
+  return enrichRoutine(routines[index])
+}
+
+export function deleteRoutine(id) {
+  const routines = getItems(STORAGE_KEYS.routines)
+  const filtered = routines.filter((r) => r.id !== id)
+  setItems(STORAGE_KEYS.routines, filtered)
 }
 
 // Progress

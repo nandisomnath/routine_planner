@@ -1,17 +1,21 @@
-# Routine Planner Template - Setup TODO
+# Routine Enhancement TODO
 
-- [x] Create project plan and get user approval
-- [x] Create Frontend template (React + Vite)
-  - [x] package.json, vite.config.js, index.html
-  - [x] Main entry files (main.jsx, App.jsx, index.css)
-  - [x] Pages (Dashboard, Routine, Progress, Events, Notes)
-  - [x] Components (Navbar)
-  - [x] API utility
-- [x] Create Backend template (Node.js + Express)
-  - [x] package.json
-  - [x] server.js
-  - [x] Routes (routines, progress, events, notes)
-- [x] Add modern CSS design to Navbar and global styles
-- [x] Update Dashboard and Progress pages to use new design classes
-- [x] Add dark/light mode toggle with localStorage persistence
-
+## Plan
+- [x] Step 0: Analyze codebase and create plan
+- [x] Step 1: Update backend (`backend/routes/routines.js`)
+  - Add `subjectName`, `startTime`, `endTime`, `date`, `isFollowed`, `status` fields
+  - Update validation functions
+  - Add PATCH endpoint for updating routines
+- [x] Step 2: Update frontend API (`frontend/src/api/api.js`)
+  - Ensure `createRoutine` accepts new fields
+  - Ensure `updateRoutine` works for patching
+- [x] Step 3: Update frontend page (`frontend/src/pages/Routine.jsx`)
+  - Add `date` input field
+  - Add `isFollowed` checkbox display
+  - Add routine status logic (upcoming, completed, backlog, missed)
+  - Display routines in sections: Upcoming, Completed, Backlog
+  - Allow re-scheduling backlog items
+- [x] Step 4: Update CSS (`frontend/src/index.css`)
+  - Add styles for backlog items, status badges, checkbox styling, section headers
+- [x] Step 5: Test and verify
+  - Build passed successfully
