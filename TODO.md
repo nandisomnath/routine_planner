@@ -1,21 +1,33 @@
-# Routine Enhancement TODO
+# Implementation TODO
 
-## Plan
-- [x] Step 0: Analyze codebase and create plan
-- [x] Step 1: Update backend (`backend/routes/routines.js`)
-  - Add `subjectName`, `startTime`, `endTime`, `date`, `isFollowed`, `status` fields
-  - Update validation functions
-  - Add PATCH endpoint for updating routines
-- [x] Step 2: Update frontend API (`frontend/src/api/api.js`)
-  - Ensure `createRoutine` accepts new fields
-  - Ensure `updateRoutine` works for patching
-- [x] Step 3: Update frontend page (`frontend/src/pages/Routine.jsx`)
-  - Add `date` input field
-  - Add `isFollowed` checkbox display
-  - Add routine status logic (upcoming, completed, backlog, missed)
-  - Display routines in sections: Upcoming, Completed, Backlog
-  - Allow re-scheduling backlog items
-- [x] Step 4: Update CSS (`frontend/src/index.css`)
-  - Add styles for backlog items, status badges, checkbox styling, section headers
-- [x] Step 5: Test and verify
-  - Build passed successfully
+## Step 1: Install Dependencies
+- [x] framer-motion, tailwindcss, postcss, autoprefixer, lucide-react
+
+## Step 2: Configuration
+- [x] Create tailwind.config.js
+- [x] Create postcss.config.js
+- [x] Update index.css with Tailwind directives
+
+## Step 3: Static Data
+- [x] Create frontend/src/data/plansData.js
+
+## Step 4: Components
+- [x] Create PlanCard.jsx
+- [x] Create RoadmapNode.jsx
+
+## Step 5: Pages
+- [x] Create Plans.jsx
+- [x] Create PlanDetail.jsx (replaces old Progress.jsx)
+
+## Step 6: Routing & Navigation
+- [x] Update App.jsx routes
+- [x] Update Navbar.jsx links
+
+## Step 7: Cleanup
+- [x] Remove old Progress.jsx (or replace it)
+
+## Step 8: Test & Run
+- [ ] npm install
+- [ ] npm run dev
+- [ ] Verify /plans and /progress/:id pages
+

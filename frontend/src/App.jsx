@@ -1,8 +1,9 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Routine from './pages/Routine'
-import Progress from './pages/Progress'
+import Plans from './pages/Plans'
+import PlanDetail from './pages/PlanDetail'
 import Events from './pages/Events'
 import Notes from './pages/Notes'
 
@@ -14,7 +15,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/routine" element={<Routine />} />
-          <Route path="/progress" element={<Progress />} />
+          <Route path="/plans" element={<Plans />} />
+          <Route path="/progress/:id" element={<PlanDetail />} />
+          <Route path="/progress" element={<Navigate to="/plans" replace />} />
           <Route path="/events" element={<Events />} />
           <Route path="/notes" element={<Notes />} />
         </Routes>

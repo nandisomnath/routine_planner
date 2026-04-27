@@ -19,7 +19,7 @@ function Navbar() {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: '📊' },
     { path: '/routine', label: 'Routine', icon: '📅' },
-    { path: '/progress', label: 'Progress', icon: '📈' },
+    { path: '/plans', label: 'Study Plans', icon: '📈' },
     { path: '/events', label: 'Events', icon: '🎓' },
     { path: '/notes', label: 'Notes', icon: '📝' },
   ]
@@ -35,7 +35,7 @@ function Navbar() {
           <Link
             key={item.path}
             to={item.path}
-            className={`navbar-link ${location.pathname === item.path ? 'active' : ''}`}
+            className={`navbar-link ${(location.pathname === item.path || (item.path === '/plans' && location.pathname.startsWith('/progress'))) ? 'active' : ''}`}
           >
             <span className="nav-icon">{item.icon}</span>
             <span className="nav-label">{item.label}</span>
