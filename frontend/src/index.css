@@ -456,6 +456,26 @@ li p {
   color: var(--text-heading);
 }
 
+/* ===== ERROR MESSAGES ===== */
+.error-message {
+  color: #e53e3e;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: #e53e3e !important;
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15) !important;
+}
+
+input[aria-invalid="true"]:focus,
+textarea[aria-invalid="true"]:focus {
+  border-color: #e53e3e !important;
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.25) !important;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .navbar {

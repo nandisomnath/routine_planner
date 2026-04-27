@@ -5,39 +5,81 @@ function Events() {
   const [events, setEvents] = useState([])
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
+  const [errors, setErrors] = useState({})
 
   useEffect(() => {
     getEvents().then(setEvents).catch(console.error)
   }, [])
 
+  function validate(titleVal, dateVal) {
+    const newErrors = {}
+    if (!titleVal || titleVal.trim().length < 2) {
+      newErrors.title = 'Title must be at least 2 characters'
+    } else if (titleVal.trim().length > 100) {
+      newErrors.title = 'Title must not exceed 100 characters'
+    }
+    if (!dateVal) {
+      newErrors.date = 'Date is required'
+    } else {
+      const regex = /^\d{4}-\d{2}-\d{2}$/
+      if (!regex.test(dateVal)) {
+        newErrors.date = 'Date must be in YYYY-MM-DD format'
+      } else {
+        const dateObj = new Date(dateVal)
+        if (isNaN(dateObj.getTime())) {
+          newErrors.date = 'Date is invalid'
+        }
+      }
+    }
+    return newErrors
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!title || !date) return
-    const newEvent = await createEvent({ title, date })
-    setEvents([...events, newEvent])
-    setTitle('')
-    setDate('')
+    const validationErrors = validate(title, date)
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
+    try {
+      const newEvent = await createEvent({ title: title.trim(), date })
+      setEvents([...events, newEvent])
+      setTitle('')
+      setDate('')
+      setErrors({})
+    } catch (err) {
+      setErrors({ submit: err.message || 'Failed to add event' })
+    }
   }
 
   return (
     <div>
       <h1>Academic Events</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div>
           <input
             placeholder="Event Title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => { setTitle(e.target.value); setErrors((prev) => ({ ...prev, title: undefined })) }}
+            maxLength={100}
+            aria-invalid={!!errors.title}
+            aria-describedby={errors.title ? 'title-error' : undefined}
           />
+          {errors.title && <span id="title-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.title}</span>}
         </div>
         <div>
           <input
             type="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={(e) => { setDate(e.target.value); setErrors((prev) => ({ ...prev, date: undefined })) }}
+            aria-invalid={!!errors.date}
+            aria-describedby={errors.date ? 'date-error' : undefined}
           />
+          {errors.date && <span id="date-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.date}</span>}
         </div>
         <button type="submit">Add Event</button>
+        {errors.submit && <p style={{ color: '#e53e3e', fontSize: '0.9rem' }}>{errors.submit}</p>}
       </form>
 
       <h2>Upcoming / Saved Events</h2>

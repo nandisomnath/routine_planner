@@ -5,30 +5,63 @@ function Progress() {
   const [progressList, setProgressList] = useState([])
   const [subject, setSubject] = useState('')
   const [percent, setPercent] = useState('')
+  const [errors, setErrors] = useState({})
 
   useEffect(() => {
     getProgress().then(setProgressList).catch(console.error)
   }, [])
 
+  function validate(subjectVal, percentVal) {
+    const newErrors = {}
+    if (!subjectVal || subjectVal.trim().length < 2) {
+      newErrors.subject = 'Subject must be at least 2 characters'
+    } else if (subjectVal.trim().length > 100) {
+      newErrors.subject = 'Subject must not exceed 100 characters'
+    }
+    const num = Number(percentVal)
+    if (percentVal === '' || isNaN(num)) {
+      newErrors.percent = 'Percent must be a number'
+    } else if (num < 0) {
+      newErrors.percent = 'Percent cannot be less than 0'
+    } else if (num > 100) {
+      newErrors.percent = 'Percent cannot exceed 100'
+    }
+    return newErrors
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!subject || percent === '') return
-    const newProgress = await updateProgress({ subject, percent: Number(percent) })
-    setProgressList([...progressList, newProgress])
-    setSubject('')
-    setPercent('')
+    const validationErrors = validate(subject, percent)
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
+    try {
+      const newProgress = await updateProgress({ subject: subject.trim(), percent: Number(percent) })
+      setProgressList([...progressList, newProgress])
+      setSubject('')
+      setPercent('')
+      setErrors({})
+    } catch (err) {
+      setErrors({ submit: err.message || 'Failed to update progress' })
+    }
   }
 
   return (
     <div>
       <h1>Study Progress</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div>
           <input
             placeholder="Subject / Topic"
             value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+            onChange={(e) => { setSubject(e.target.value); setErrors((prev) => ({ ...prev, subject: undefined })) }}
+            maxLength={100}
+            aria-invalid={!!errors.subject}
+            aria-describedby={errors.subject ? 'subject-error' : undefined}
           />
+          {errors.subject && <span id="subject-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.subject}</span>}
         </div>
         <div>
           <input
@@ -37,10 +70,14 @@ function Progress() {
             max="100"
             placeholder="Completion %"
             value={percent}
-            onChange={(e) => setPercent(e.target.value)}
+            onChange={(e) => { setPercent(e.target.value); setErrors((prev) => ({ ...prev, percent: undefined })) }}
+            aria-invalid={!!errors.percent}
+            aria-describedby={errors.percent ? 'percent-error' : undefined}
           />
+          {errors.percent && <span id="percent-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.percent}</span>}
         </div>
         <button type="submit">Update Progress</button>
+        {errors.submit && <p style={{ color: '#e53e3e', fontSize: '0.9rem' }}>{errors.submit}</p>}
       </form>
 
       <h2>Progress Tracker</h2>
