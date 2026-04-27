@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Map, BookOpen, RotateCcw } from 'lucide-react'
+import { ChevronLeft, Map, BookOpen, RotateCcw } from 'lucide-react'
 import RoadmapNode from '../components/RoadmapNode'
 import { plans, roadmapData } from '../data/plansData'
 import { useProgress } from '../hooks/useProgress'
@@ -36,7 +36,7 @@ function PlanDetail() {
             onClick={() => navigate('/plans')}
             className="inline-flex items-center gap-2"
           >
-            <ArrowLeft size={18} />
+            <ChevronLeft size={18} />
             Back to Plans
           </button>
         </motion.div>
@@ -62,7 +62,7 @@ function PlanDetail() {
             onClick={() => navigate('/plans')}
             className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-muted)] hover:text-primary hover:border-primary/40 transition-colors duration-200"
           >
-            <ArrowLeft size={18} />
+            <ChevronLeft size={18} />
             <span className="text-sm font-medium">Back</span>
           </motion.button>
 
