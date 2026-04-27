@@ -1,22 +1,8 @@
-# Progress Tracking Implementation
+# Fix Progress Bar Instant Update
 
 ## Steps
-- [x] 1. Update `plansData.js` — convert subtopics to `{id, title}` objects
-- [x] 2. Create `useProgress.js` hook — localStorage read/write logic
-- [x] 3. Create `SubtopicItem.jsx` — animated checkbox component
-- [x] 4. Update `PlanCard.jsx` — add plan-level progress bar
-- [x] 5. Update `RoadmapNode.jsx` — add node progress + checkboxes + mark-all/reset
-- [x] 6. Update `PlanDetail.jsx` — add overall progress in sticky header + back button with text
-- [x] 7. Test & verify — build passes
-
-## Features Delivered
-- Plan-level progress bars on `/plans` with percentage
-- Node-level progress bars inside each roadmap node
-- Subtopic checkboxes with animated toggle (scale + color + strikethrough)
-- localStorage persistence (`progress_<planId>` keys)
-- "Mark all complete" + "Reset" buttons per topic
-- Overall plan progress in sticky header on `/progress/[id]`
-- Back button with icon + "Back" text on PlanDetail page
-- Mobile responsive progress bars
-- All existing animations preserved (expand/collapse, scroll focus)
+- [x] 1. Analyze codebase and identify root cause
+- [x] 2. Create fix plan and get user approval
+- [x] 3. Update `useProgress.js` to sync across instances via custom events + storage events
+- [x] 4. Verify the fix works (test toggling subtopics, navigate between pages)
 

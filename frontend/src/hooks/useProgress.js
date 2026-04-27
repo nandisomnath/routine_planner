@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = (planId) => `progress_${planId}`;
+const PROGRESS_EVENT = 'progress-update';
 
 function readProgress(planId) {
   try {
@@ -19,6 +20,14 @@ function writeProgress(planId, data) {
   }
 }
 
+function notifyProgressUpdate(planId) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent(PROGRESS_EVENT, { detail: { planId } })
+    );
+  }
+}
+
 export function useProgress(planId) {
   const [progress, setProgress] = useState(() => readProgress(planId));
 
@@ -27,12 +36,36 @@ export function useProgress(planId) {
     setProgress(readProgress(planId));
   }, [planId]);
 
+  // Sync across instances & tabs
+  useEffect(() => {
+    const handleCustom = (e) => {
+      if (e.detail?.planId === planId) {
+        setProgress(readProgress(planId));
+      }
+    };
+
+    const handleStorage = (e) => {
+      if (e.key === STORAGE_KEY(planId)) {
+        setProgress(readProgress(planId));
+      }
+    };
+
+    window.addEventListener(PROGRESS_EVENT, handleCustom);
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener(PROGRESS_EVENT, handleCustom);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, [planId]);
+
   const toggleSubtopic = useCallback(
     (nodeId, subtopicId) => {
       const key = `${nodeId}:${subtopicId}`;
       setProgress((prev) => {
         const next = { ...prev, [key]: !prev[key] };
         writeProgress(planId, next);
+        notifyProgressUpdate(planId);
         return next;
       });
     },
@@ -45,6 +78,7 @@ export function useProgress(planId) {
       setProgress((prev) => {
         const next = { ...prev, [key]: value };
         writeProgress(planId, next);
+        notifyProgressUpdate(planId);
         return next;
       });
     },
@@ -57,6 +91,7 @@ export function useProgress(planId) {
         const next = { ...prev };
         subtopicIds.forEach((sid) => delete next[`${nodeId}:${sid}`]);
         writeProgress(planId, next);
+        notifyProgressUpdate(planId);
         return next;
       });
     },
@@ -71,6 +106,7 @@ export function useProgress(planId) {
           next[`${nodeId}:${sid}`] = true;
         });
         writeProgress(planId, next);
+        notifyProgressUpdate(planId);
         return next;
       });
     },
@@ -80,6 +116,7 @@ export function useProgress(planId) {
   const resetPlan = useCallback(() => {
     setProgress({});
     writeProgress(planId, {});
+    notifyProgressUpdate(planId);
   }, [planId]);
 
   const isCompleted = useCallback(

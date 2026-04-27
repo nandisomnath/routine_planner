@@ -7,6 +7,8 @@ import SubtopicItem from './SubtopicItem'
 function RoadmapNode({ node, index, total, planId }) {
   const ref = useRef(null)
   const [isFocused, setIsFocused] = useState(false)
+  const focusTimeoutRef = useRef(null)
+  const wasFocusedRef = useRef(false)
   const {
     toggleSubtopic,
     isCompleted,
@@ -22,15 +24,25 @@ function RoadmapNode({ node, index, total, planId }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          const rect = entry.boundingClientRect
-          const viewportCenter = window.innerHeight / 2
-          const elementCenter = rect.top + rect.height / 2
-          const distance = Math.abs(viewportCenter - elementCenter)
-          setIsFocused(distance < 250)
-        } else {
-          setIsFocused(false)
+        if (focusTimeoutRef.current) {
+          clearTimeout(focusTimeoutRef.current)
         }
+
+        focusTimeoutRef.current = setTimeout(() => {
+          if (entry.isIntersecting) {
+            const rect = entry.boundingClientRect
+            const viewportCenter = window.innerHeight / 2
+            const elementCenter = rect.top + rect.height / 2
+            const distance = Math.abs(viewportCenter - elementCenter)
+            const shouldFocus = distance < 250
+            if (shouldFocus && isLast) {
+              wasFocusedRef.current = true
+            }
+            setIsFocused(shouldFocus)
+          } else if (!(isLast && wasFocusedRef.current)) {
+            setIsFocused(false)
+          }
+        }, 100)
       },
       {
         threshold: [0, 0.25, 0.5, 0.75, 1],
@@ -42,7 +54,12 @@ function RoadmapNode({ node, index, total, planId }) {
       observer.observe(ref.current)
     }
 
-    return () => observer.disconnect()
+    return () => {
+      if (focusTimeoutRef.current) {
+        clearTimeout(focusTimeoutRef.current)
+      }
+      observer.disconnect()
+    }
   }, [])
 
   const isLast = index === total - 1
@@ -95,7 +112,6 @@ function RoadmapNode({ node, index, total, planId }) {
       {/* Content card */}
       <motion.div
         className={`flex-grow pb-8 md:pb-12 transition-all duration-500 ${isFocused ? 'md:translate-x-2' : ''}`}
-        layout
       >
         <motion.div
           className={`rounded-2xl border p-5 md:p-6 transition-all duration-500 ${
