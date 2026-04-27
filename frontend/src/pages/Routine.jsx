@@ -4,41 +4,52 @@ import { getRoutines, createRoutine } from '../api/api'
 function Routine() {
   const [routines, setRoutines] = useState([])
   const [title, setTitle] = useState('')
-  const [time, setTime] = useState('')
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
     setRoutines(getRoutines())
   }, [])
 
-  function validate(titleVal, timeVal) {
+  function validate(titleVal, startVal, endVal) {
     const newErrors = {}
     if (!titleVal || titleVal.trim().length < 2) {
       newErrors.title = 'Title must be at least 2 characters'
     } else if (titleVal.trim().length > 100) {
       newErrors.title = 'Title must not exceed 100 characters'
     }
-    if (!timeVal || timeVal.trim().length < 1) {
-      newErrors.time = 'Time is required'
-    } else if (timeVal.trim().length > 50) {
-      newErrors.time = 'Time must not exceed 50 characters'
+    if (!startVal) {
+      newErrors.startTime = 'Start time is required'
+    } else if (!/^\d{2}:\d{2}$/.test(startVal)) {
+      newErrors.startTime = 'Start time must be in HH:MM format'
+    }
+    if (!endVal) {
+      newErrors.endTime = 'End time is required'
+    } else if (!/^\d{2}:\d{2}$/.test(endVal)) {
+      newErrors.endTime = 'End time must be in HH:MM format'
+    }
+    if (startVal && endVal && startVal >= endVal) {
+      newErrors.endTime = 'End time must be after start time'
     }
     return newErrors
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const validationErrors = validate(title, time)
+    const validationErrors = validate(title, startTime, endTime)
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
       return
     }
 
     try {
-      const newRoutine = createRoutine({ title: title.trim(), time: time.trim() })
+      const timeRange = `${startTime} - ${endTime}`
+      const newRoutine = createRoutine({ title: title.trim(), time: timeRange })
       setRoutines([...routines, newRoutine])
       setTitle('')
-      setTime('')
+      setStartTime('')
+      setEndTime('')
       setErrors({})
     } catch (err) {
       setErrors({ submit: err.message || 'Failed to add routine' })
@@ -63,15 +74,25 @@ function Routine() {
         </div>
         <div>
           <input
-            name="time"
-            placeholder="Time (e.g., 10:00 AM - 12:00 PM)"
-            value={time}
-            onChange={(e) => { setTime(e.target.value); setErrors((prev) => ({ ...prev, time: undefined })) }}
-            maxLength={50}
-            aria-invalid={!!errors.time}
-            aria-describedby={errors.time ? 'time-error' : undefined}
+            name="startTime"
+            type="time"
+            value={startTime}
+            onChange={(e) => { setStartTime(e.target.value); setErrors((prev) => ({ ...prev, startTime: undefined, endTime: undefined })) }}
+            aria-invalid={!!errors.startTime}
+            aria-describedby={errors.startTime ? 'startTime-error' : undefined}
           />
-          {errors.time && <span id="time-error" className="error-message">{errors.time}</span>}
+          {errors.startTime && <span id="startTime-error" className="error-message">{errors.startTime}</span>}
+        </div>
+        <div>
+          <input
+            name="endTime"
+            type="time"
+            value={endTime}
+            onChange={(e) => { setEndTime(e.target.value); setErrors((prev) => ({ ...prev, endTime: undefined })) }}
+            aria-invalid={!!errors.endTime}
+            aria-describedby={errors.endTime ? 'endTime-error' : undefined}
+          />
+          {errors.endTime && <span id="endTime-error" className="error-message">{errors.endTime}</span>}
         </div>
         <button type="submit">Add to Routine</button>
         {errors.submit && <p className="error-message">{errors.submit}</p>}
