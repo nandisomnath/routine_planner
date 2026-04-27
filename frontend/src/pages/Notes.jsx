@@ -8,7 +8,7 @@ function Notes() {
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    getNotes().then(setNotes).catch(console.error)
+    setNotes(getNotes())
   }, [])
 
   function validate(dateVal, contentVal) {
@@ -34,7 +34,7 @@ function Notes() {
     return newErrors
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const validationErrors = validate(date, content)
     if (Object.keys(validationErrors).length > 0) {
@@ -43,7 +43,7 @@ function Notes() {
     }
 
     try {
-      const newNote = await createNote({ date, content: content.trim() })
+      const newNote = createNote({ date, content: content.trim() })
       setNotes([...notes, newNote])
       setDate('')
       setContent('')
@@ -65,7 +65,7 @@ function Notes() {
             aria-invalid={!!errors.date}
             aria-describedby={errors.date ? 'date-error' : undefined}
           />
-          {errors.date && <span id="date-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.date}</span>}
+          {errors.date && <span id="date-error" className="error-message">{errors.date}</span>}
         </div>
         <div>
           <textarea
@@ -76,10 +76,10 @@ function Notes() {
             aria-invalid={!!errors.content}
             aria-describedby={errors.content ? 'content-error' : undefined}
           />
-          {errors.content && <span id="content-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.content}</span>}
+          {errors.content && <span id="content-error" className="error-message">{errors.content}</span>}
         </div>
         <button type="submit">Save Note</button>
-        {errors.submit && <p style={{ color: '#e53e3e', fontSize: '0.9rem' }}>{errors.submit}</p>}
+        {errors.submit && <p className="error-message">{errors.submit}</p>}
       </form>
 
       <h2>Saved Notes</h2>

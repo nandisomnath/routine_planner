@@ -8,7 +8,7 @@ function Events() {
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    getEvents().then(setEvents).catch(console.error)
+    setEvents(getEvents())
   }, [])
 
   function validate(titleVal, dateVal) {
@@ -34,7 +34,7 @@ function Events() {
     return newErrors
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const validationErrors = validate(title, date)
     if (Object.keys(validationErrors).length > 0) {
@@ -43,7 +43,7 @@ function Events() {
     }
 
     try {
-      const newEvent = await createEvent({ title: title.trim(), date })
+      const newEvent = createEvent({ title: title.trim(), date })
       setEvents([...events, newEvent])
       setTitle('')
       setDate('')
@@ -66,7 +66,7 @@ function Events() {
             aria-invalid={!!errors.title}
             aria-describedby={errors.title ? 'title-error' : undefined}
           />
-          {errors.title && <span id="title-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.title}</span>}
+          {errors.title && <span id="title-error" className="error-message">{errors.title}</span>}
         </div>
         <div>
           <input
@@ -76,10 +76,10 @@ function Events() {
             aria-invalid={!!errors.date}
             aria-describedby={errors.date ? 'date-error' : undefined}
           />
-          {errors.date && <span id="date-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.date}</span>}
+          {errors.date && <span id="date-error" className="error-message">{errors.date}</span>}
         </div>
         <button type="submit">Add Event</button>
-        {errors.submit && <p style={{ color: '#e53e3e', fontSize: '0.9rem' }}>{errors.submit}</p>}
+        {errors.submit && <p className="error-message">{errors.submit}</p>}
       </form>
 
       <h2>Upcoming / Saved Events</h2>

@@ -8,7 +8,7 @@ function Progress() {
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    getProgress().then(setProgressList).catch(console.error)
+    setProgressList(getProgress())
   }, [])
 
   function validate(subjectVal, percentVal) {
@@ -29,7 +29,7 @@ function Progress() {
     return newErrors
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const validationErrors = validate(subject, percent)
     if (Object.keys(validationErrors).length > 0) {
@@ -38,7 +38,7 @@ function Progress() {
     }
 
     try {
-      const newProgress = await updateProgress({ subject: subject.trim(), percent: Number(percent) })
+      const newProgress = updateProgress({ subject: subject.trim(), percent: Number(percent) })
       setProgressList([...progressList, newProgress])
       setSubject('')
       setPercent('')
@@ -61,7 +61,7 @@ function Progress() {
             aria-invalid={!!errors.subject}
             aria-describedby={errors.subject ? 'subject-error' : undefined}
           />
-          {errors.subject && <span id="subject-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.subject}</span>}
+          {errors.subject && <span id="subject-error" className="error-message">{errors.subject}</span>}
         </div>
         <div>
           <input
@@ -74,10 +74,10 @@ function Progress() {
             aria-invalid={!!errors.percent}
             aria-describedby={errors.percent ? 'percent-error' : undefined}
           />
-          {errors.percent && <span id="percent-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.percent}</span>}
+          {errors.percent && <span id="percent-error" className="error-message">{errors.percent}</span>}
         </div>
         <button type="submit">Update Progress</button>
-        {errors.submit && <p style={{ color: '#e53e3e', fontSize: '0.9rem' }}>{errors.submit}</p>}
+        {errors.submit && <p className="error-message">{errors.submit}</p>}
       </form>
 
       <h2>Progress Tracker</h2>

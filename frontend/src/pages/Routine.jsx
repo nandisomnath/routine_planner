@@ -8,7 +8,7 @@ function Routine() {
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    getRoutines().then(setRoutines).catch(console.error)
+    setRoutines(getRoutines())
   }, [])
 
   function validate(titleVal, timeVal) {
@@ -26,7 +26,7 @@ function Routine() {
     return newErrors
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const validationErrors = validate(title, time)
     if (Object.keys(validationErrors).length > 0) {
@@ -35,7 +35,7 @@ function Routine() {
     }
 
     try {
-      const newRoutine = await createRoutine({ title: title.trim(), time: time.trim() })
+      const newRoutine = createRoutine({ title: title.trim(), time: time.trim() })
       setRoutines([...routines, newRoutine])
       setTitle('')
       setTime('')
@@ -58,7 +58,7 @@ function Routine() {
             aria-invalid={!!errors.title}
             aria-describedby={errors.title ? 'title-error' : undefined}
           />
-          {errors.title && <span id="title-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.title}</span>}
+          {errors.title && <span id="title-error" className="error-message">{errors.title}</span>}
         </div>
         <div>
           <input
@@ -69,10 +69,10 @@ function Routine() {
             aria-invalid={!!errors.time}
             aria-describedby={errors.time ? 'time-error' : undefined}
           />
-          {errors.time && <span id="time-error" style={{ color: '#e53e3e', fontSize: '0.85rem' }}>{errors.time}</span>}
+          {errors.time && <span id="time-error" className="error-message">{errors.time}</span>}
         </div>
         <button type="submit">Add to Routine</button>
-        {errors.submit && <p style={{ color: '#e53e3e', fontSize: '0.9rem' }}>{errors.submit}</p>}
+        {errors.submit && <p className="error-message">{errors.submit}</p>}
       </form>
 
       <h2>Your Schedule</h2>
@@ -92,3 +92,4 @@ function Routine() {
 }
 
 export default Routine
+

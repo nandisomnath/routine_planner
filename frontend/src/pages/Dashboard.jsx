@@ -7,9 +7,9 @@ function Dashboard() {
   const [progress, setProgress] = useState([])
 
   useEffect(() => {
-    getEvents().then(setEvents).catch(console.error)
-    getNotes().then(setNotes).catch(console.error)
-    getProgress().then(setProgress).catch(console.error)
+    setEvents(getEvents())
+    setNotes(getNotes())
+    setProgress(getProgress())
   }, [])
 
   const totalProgress = progress.length
